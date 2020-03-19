@@ -1,0 +1,21 @@
+import os
+import wget
+import time
+import shutil
+import subprocess
+filepath = 'sample.txt'
+lines = [line.rstrip('\n') for line in open(filepath)]
+
+for line in lines:
+	url = "https://www.ncdc.noaa.gov/orders/qclcd/"+line
+	print(url)
+	wget.download(url, './')
+	extractFolderName = line.replace('.tar.gz', '').replace('.zip', '')
+	shutil.unpack_archive('./'+line, './extracted/'+extractFolderName)	
+	#to write hdfs upload 
+	subprocess.call(['hadoop fs -copyFromLocal /home/hduser/hadoop/extracted/+extractFolderName  hdfs:///data/'+extractFolderName], shell=True)
+	#seconds
+	time.sleep(10)
+	os.remove('./'+line)
+	shutil.rmtree('.y
+/extracted/'+extractFolderName)
